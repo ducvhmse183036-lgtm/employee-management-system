@@ -7,6 +7,74 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "employees", schema = "dbo")
 public class Employee {
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setEmployeeCode(String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
+    }
+
+    public void setGivenName(String givenName) {
+        this.givenName = givenName;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setIdentityCard(String identityCard) {
+        this.identityCard = identityCard;
+    }
+
+    public void setIdentityCardIssuePlace(String identityCardIssuePlace) {
+        this.identityCardIssuePlace = identityCardIssuePlace;
+    }
+
+    public void setIdentityCardIssueDate(LocalDate identityCardIssueDate) {
+        this.identityCardIssueDate = identityCardIssueDate;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public void setOrganizationUnitId(Long organizationUnitId) {
+        this.organizationUnitId = organizationUnitId;
+    }
+
+    public void setPositionTitle(String positionTitle) {
+        this.positionTitle = positionTitle;
+    }
+
+    public void setHireDate(LocalDate hireDate) {
+        this.hireDate = hireDate;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public Long getId() {
         return id;
     }
@@ -74,6 +142,7 @@ public class Employee {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
