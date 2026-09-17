@@ -1,4 +1,5 @@
 import { clearSession, readSession } from '../auth/authStorage'
+import { apiUrl } from '../config/apiConfig'
 
 export class ApiError extends Error {
   constructor(message, status) {
@@ -7,27 +8,11 @@ export class ApiError extends Error {
   }
 }
 
-// Never send a bearer token to an arbitrary photo URL or external origin.
-export function localPath(path) {
-  if (
-    typeof path !== 'string' ||
-    !/^\/(api|uploads)\//.test(path) ||
-    path.includes('\\')
-  )
-    throw new Error('Unsupported resource URL.')
-  const url = new URL(path, window.location.origin)
-  if (
-    url.origin !== window.location.origin ||
-    !/^\/(api|uploads)\//.test(url.pathname)
-  )
-    throw new Error('Unsupported resource URL.')
-  return url.pathname + url.search
-}
-
 export async function api(
   path,
   { body, publicRequest = false, blob = false, ...options } = {},
 ) {
+  const url = apiUrl(path)
   const headers = new Headers(options.headers)
   if (!publicRequest) {
     const session = readSession()
@@ -43,7 +28,7 @@ export async function api(
   }
   let response
   try {
-    response = await fetch(localPath(path), {
+    response = await fetch(url, {
       ...options,
       headers,
       body,

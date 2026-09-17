@@ -1,5 +1,7 @@
 # Employee Management System — Frontend
 
+For local Windows backend + physical mobile devices, see [local web/mobile commands and environment files](LOCAL_MOBILE.md). `.env.development` now calls `http://localhost:8080` directly; `.env.mobile` selects the PC LAN backend for mobile builds.
+
 React + Vite + JavaScript + Bootstrap 5 frontend for the existing Spring Boot application. All application data uses the real API. No backend files are modified.
 
 ## Start
@@ -11,7 +13,7 @@ npm run dev
 
 Open http://localhost:5173. Start the Spring Boot backend separately on http://localhost:8080 and sign in with an existing account. On Windows PowerShell, use `npm.cmd` if script execution policy prevents `npm` from running.
 
-Vite proxies `/api` and `/uploads` to port 8080. For a production deployment, configure the web server to proxy these paths and serve `index.html` for frontend routes; Vite's development proxy is not part of the generated static build.
+Vite proxies `/api` and `/uploads` to port 8080 when `VITE_API_BASE_URL` is unset. Production uses the HTTPS backend origin configured by `VITE_API_BASE_URL`; see `.env.example`. Vercel SPA routing and Capacitor configuration are prepared. See [deployment and iPad/iPhone instructions](DEPLOYMENT.md).
 
 ## Features
 

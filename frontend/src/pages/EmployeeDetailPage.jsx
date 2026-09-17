@@ -163,7 +163,7 @@ function EmployeeProfile({ id }) {
             name={fullName(employee)}
             large
           />
-          <div className="flex-grow-1">
+          <div className="flex-grow-1 profile-identity">
             <div className="small text-secondary mb-2">
               {employee.employeeCode}
             </div>
@@ -175,7 +175,7 @@ function EmployeeProfile({ id }) {
               <StatusBadge status={employee.status} />
             </div>
           </div>
-          <div className="d-flex gap-2 flex-wrap">
+          <div className="d-flex gap-2 flex-wrap profile-actions">
             {canEdit && (
               <>
                 <Link to={`/employees/${id}/edit`} className="btn btn-primary">

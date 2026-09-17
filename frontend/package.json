@@ -6,12 +6,23 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:mobile": "vite build --mode mobile --outDir dist-mobile",
     "lint": "oxlint",
     "preview": "vite preview",
     "test:e2e": "playwright test",
-    "format": "prettier --write src tests *.js"
+    "format": "prettier --write src tests *.js",
+    "test:config": "node --test tests/apiConfig.test.js",
+    "test:webkit": "playwright test --config playwright.webkit.config.js",
+    "cap:sync": "npm run build && cap sync",
+    "cap:ios": "cap open ios",
+    "cap:android": "cap open android",
+    "cap:sync:mobile": "node scripts/mobile.mjs sync",
+    "cap:run:mobile": "node scripts/mobile.mjs run"
   },
   "dependencies": {
+    "@capacitor/android": "8.4.3",
+    "@capacitor/core": "8.4.3",
+    "@capacitor/ios": "8.4.3",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
     "react": "^19.2.8",
@@ -19,6 +30,7 @@
     "react-router-dom": "^7.18.4"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.4.3",
     "@playwright/test": "^1.63.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",

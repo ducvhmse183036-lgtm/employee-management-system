@@ -98,17 +98,19 @@ export default function EmployeesPage() {
         </div>
       )}
       <div className="row g-4">
-        <div className="col-12 col-xl-3">
+        <div className="col-12 col-xxl-3">
           <button
-            className="btn btn-outline-secondary d-xl-none w-100 mb-2"
+            className="btn btn-outline-secondary d-xxl-none w-100 mb-2"
             onClick={() => setOpen(!open)}
             aria-expanded={open}
+            aria-controls="organization-filters"
           >
             <Icon name="diagram-3" className="me-2" />
             Organization filters
           </button>
           <section
-            className={`card p-3 p-md-4 organization-panel ${open ? '' : 'd-none d-xl-block'}`}
+            id="organization-filters"
+            className={`card p-3 p-md-4 organization-panel ${open ? '' : 'd-none d-xxl-block'}`}
           >
             <OrganizationTree
               selected={selected}
@@ -121,7 +123,7 @@ export default function EmployeesPage() {
             />
           </section>
         </div>
-        <div className="col-12 col-xl-9">
+        <div className="col-12 col-xxl-9">
           <section className="card">
             <div className="p-3 p-md-4 border-bottom">
               <div className="d-flex flex-wrap justify-content-between gap-2 mb-3">
@@ -232,14 +234,14 @@ export default function EmployeesPage() {
                             </Link>
                           </div>
                         </td>
-                        <td className="text-secondary">
+                        <td className="text-secondary" data-label="Code">
                           {employee.employeeCode}
                         </td>
-                        <td>{employee.positionTitle || '—'}</td>
-                        <td>
+                        <td data-label="Position">{employee.positionTitle || '—'}</td>
+                        <td data-label="Status">
                           <StatusBadge status={employee.status} />
                         </td>
-                        <td>
+                        <td className="employee-row-arrow">
                           <Icon name="chevron-right" />
                         </td>
                       </tr>

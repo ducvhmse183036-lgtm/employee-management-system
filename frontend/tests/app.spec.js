@@ -53,60 +53,63 @@ async function setup(page, role = 'ADMIN', authenticated = true) {
     'family-members': [],
     allowances: [],
   }
-  await page.route(/\/api\/(?!apiClient\.js)/, async (route) => {
-    const request = route.request()
-    const url = new URL(request.url())
-    const path = url.pathname
-    requests.push({
-      path,
-      search: url.search,
-      method: request.method(),
-      body: request.postData(),
-      authorization: request.headers().authorization,
-    })
-    const json = (data) => route.fulfill({ json: data })
-    if (path === '/api/auth/login') return json(session)
-    if (path === '/api/organization-tree') return json(tree)
-    if (path === '/api/corporations')
-      return json([{ id: 1, name: 'Test corporation' }])
-    if (path === '/api/departments/corporation/1')
-      return json([{ id: 2, name: 'Operations' }])
-    if (path === '/api/organization-units/department/2')
-      return json([{ id: 3, name: 'Assembly', unitType: 'TEAM' }])
-    if (path === '/api/users')
-      return json({
-        ...JSON.parse(request.postData()),
-        password: undefined,
-        id: 10,
+  await page.route(
+    (url) => url.pathname.startsWith('/api/'),
+    async (route) => {
+      const request = route.request()
+      const url = new URL(request.url())
+      const path = url.pathname
+      requests.push({
+        path,
+        search: url.search,
+        method: request.method(),
+        body: request.postData(),
+        authorization: request.headers().authorization,
       })
-    if (path === '/api/employees/1/photo')
-      return json({ photoUrl: '/uploads/test.png' })
-    const section = path.match(
-      /^\/api\/employees\/1\/(personal-info|labor-contracts|family-members|allowances)(?:\/\d+)?$/,
-    )?.[1]
-    if (section) {
-      if (request.method() !== 'GET') {
-        const value = { ...JSON.parse(request.postData()), id: 10 }
-        if (section === 'personal-info') records[section] = value
-        else if (request.method() === 'PUT') records[section] = [value]
-        else records[section].unshift(value)
-        return json(value)
+      const json = (data) => route.fulfill({ json: data })
+      if (path === '/api/auth/login') return json(session)
+      if (path === '/api/organization-tree') return json(tree)
+      if (path === '/api/corporations')
+        return json([{ id: 1, name: 'Test corporation' }])
+      if (path === '/api/departments/corporation/1')
+        return json([{ id: 2, name: 'Operations' }])
+      if (path === '/api/organization-units/department/2')
+        return json([{ id: 3, name: 'Assembly', unitType: 'TEAM' }])
+      if (path === '/api/users')
+        return json({
+          ...JSON.parse(request.postData()),
+          password: undefined,
+          id: 10,
+        })
+      if (path === '/api/employees/1/photo')
+        return json({ photoUrl: '/uploads/test.png' })
+      const section = path.match(
+        /^\/api\/employees\/1\/(personal-info|labor-contracts|family-members|allowances)(?:\/\d+)?$/,
+      )?.[1]
+      if (section) {
+        if (request.method() !== 'GET') {
+          const value = { ...JSON.parse(request.postData()), id: 10 }
+          if (section === 'personal-info') records[section] = value
+          else if (request.method() === 'PUT') records[section] = [value]
+          else records[section].unshift(value)
+          return json(value)
+        }
+        if (records[section] === null)
+          return route.fulfill({ status: 404, json: {} })
+        return json(records[section])
       }
-      if (records[section] === null)
-        return route.fulfill({ status: 404, json: {} })
-      return json(records[section])
-    }
-    if (
-      path === '/api/employees/1' ||
-      (path === '/api/employees' && request.method() === 'POST')
-    )
-      return json({
-        ...employee,
-        ...(request.postData() ? JSON.parse(request.postData()) : {}),
-      })
-    if (path.startsWith('/api/employees')) return json([employee])
-    return route.fulfill({ status: 404, json: {} })
-  })
+      if (
+        path === '/api/employees/1' ||
+        (path === '/api/employees' && request.method() === 'POST')
+      )
+        return json({
+          ...employee,
+          ...(request.postData() ? JSON.parse(request.postData()) : {}),
+        })
+      if (path.startsWith('/api/employees')) return json([employee])
+      return route.fulfill({ status: 404, json: {} })
+    },
+  )
   return { requests, errors }
 }
 
@@ -217,6 +220,7 @@ test('search and exact organization filtering use API endpoints', async ({
       ),
     )
     .toBe(true)
+  await page.getByRole('button', { name: 'Organization filters' }).click()
   await page.getByRole('button', { name: 'Assembly', exact: true }).click()
   await expect
     .poll(() =>
@@ -350,7 +354,7 @@ test('admin creates users and confirms soft deletion', async ({ page }) => {
   expect(errors).toEqual([])
 })
 
-for (const width of [390, 768, 1440]) {
+for (const width of [375, 390, 430, 768, 820, 1024, 1180, 1366, 1440]) {
   test(`responsive navigation and forms at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 })
     const { errors } = await setup(page)
@@ -358,7 +362,7 @@ for (const width of [390, 768, 1440]) {
     await expect(
       page.getByRole('link', { name: 'Test Employee' }),
     ).toBeVisible()
-    if (width < 992) {
+    if (width < 1200) {
       await page.getByRole('button', { name: 'Open navigation' }).click()
       await expect(
         page.getByRole('link', { name: 'Organization', exact: true }),
@@ -478,4 +482,91 @@ test('mobile login and modal remain within viewport, including sign out from nav
     .poll(() => page.evaluate(() => document.body.style.overflow))
     .not.toBe('hidden')
   expect(errors).toEqual([])
+})
+
+test('iPad rotation, iPhone landscape and split view keep navigation and forms usable', async ({
+  page,
+}) => {
+  const { errors } = await setup(page)
+  await page.setViewportSize({ width: 820, height: 1180 })
+  await page.goto('/employees')
+  await expect(page.getByRole('link', { name: 'Test Employee' })).toBeVisible()
+  await page.getByRole('button', { name: 'Open navigation' }).click()
+  await page.setViewportSize({ width: 1366, height: 1024 })
+  await expect(page.locator('.offcanvas-backdrop')).toHaveCount(0)
+  await expect
+    .poll(() => page.evaluate(() => document.body.style.overflow))
+    .not.toBe('hidden')
+  await expect(
+    page.getByRole('link', { name: 'Employees', exact: true }),
+  ).toBeVisible()
+  for (const size of [
+    { width: 1180, height: 820 },
+    { width: 844, height: 390 },
+    { width: 507, height: 1024 },
+  ]) {
+    await page.setViewportSize(size)
+    await expect(
+      page.getByRole('button', { name: 'Open navigation' }),
+    ).toBeVisible()
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth,
+      ),
+    ).toBe(true)
+  }
+  await page.getByRole('link', { name: 'Test Employee' }).click()
+  await page.getByRole('tab', { name: 'Allowances', exact: true }).click()
+  await page.getByRole('button', { name: 'Add Allowance', exact: true }).click()
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await page.setViewportSize({ width: 390, height: 480 })
+  await dialog
+    .getByLabel('Notes')
+    .fill('Visible with a compact keyboard viewport')
+  await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
+  await expect(dialog).toHaveCount(0)
+  expect(errors).toEqual([])
+})
+
+test('phone directory displays complete records without horizontal scrolling', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 812 })
+  await setup(page)
+  await page.route('**/api/employees', (route) =>
+    route.fulfill({
+      json: [
+        {
+          ...employee,
+          surname: 'A-very-long-employee-surname-without-spaces',
+          positionTitle: 'Senior operations and quality assurance coordinator',
+        },
+      ],
+    }),
+  )
+  await page.goto('/employees')
+  await expect(
+    page.getByText('Senior operations and quality assurance coordinator'),
+  ).toBeVisible()
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= innerWidth,
+    ),
+  ).toBe(true)
+  const table = page.locator('.employee-table')
+  expect(
+    await table.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth,
+    ),
+  ).toBe(true)
+  await page.screenshot({
+    path: 'test-results/directory-iphone.png',
+    fullPage: true,
+  })
+  await page.setViewportSize({ width: 820, height: 1180 })
+  await page.screenshot({
+    path: 'test-results/directory-ipad.png',
+    fullPage: true,
+  })
 })

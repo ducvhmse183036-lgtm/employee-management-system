@@ -551,8 +551,8 @@ label:focus-within {
   outline-offset: 3px;
 }
 
-@media (min-width: 992px) {
-  .sidebar.offcanvas-lg {
+@media (min-width: 1200px) {
+  .sidebar.offcanvas-xl {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -572,7 +572,7 @@ label:focus-within {
     min-height: 0;
   }
 }
-@media (max-width: 991px) {
+@media (max-width: 1199.98px) {
   .workspace {
     margin-left: 0;
   }
@@ -659,6 +659,228 @@ label:focus-within {
   }
   .modal-body {
     padding: 20px !important;
+  }
+}
+/* Tablet-first touch layouts, including split view and device rotation. */
+.app-shell,
+.workspace,
+.login-page {
+  min-height: 100dvh;
+}
+.sidebar {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  max-width: calc(100vw - 32px);
+}
+.sidebar-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.app-header {
+  padding-top: max(12px, env(safe-area-inset-top, 0px));
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+.main-content {
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+.app-footer {
+  padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
+}
+.page-heading > div,
+.profile-identity,
+.employee-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.profile-tabs {
+  overscroll-behavior-x: contain;
+  scroll-padding-inline: 16px;
+}
+.profile-tabs .nav-link {
+  flex-shrink: 0;
+}
+.modal {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.modal-dialog-scrollable {
+  height: calc(
+    100dvh - var(--bs-modal-margin) * 2 - env(safe-area-inset-top, 0px) -
+      env(safe-area-inset-bottom, 0px)
+  );
+}
+.modal-body {
+  overscroll-behavior: contain;
+}
+.login-page {
+  padding: max(24px, env(safe-area-inset-top, 0px))
+    max(24px, env(safe-area-inset-right, 0px))
+    max(24px, env(safe-area-inset-bottom, 0px))
+    max(24px, env(safe-area-inset-left, 0px));
+}
+@media (max-width: 1399.98px) {
+  .organization-panel {
+    min-height: 0;
+  }
+}
+@media (max-width: 1199.98px), (pointer: coarse) {
+  .btn,
+  .tree-button,
+  .sidebar-link,
+  .profile-tabs .nav-link {
+    min-height: 44px;
+  }
+  .btn-close {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .organization-tree summary {
+    min-height: 44px;
+    padding-block: 10px;
+    font-size: 0.8rem;
+  }
+  .form-control,
+  .form-select {
+    font-size: 16px;
+  }
+  .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .form-check-label {
+    padding: 8px 4px;
+  }
+  .profile-actions {
+    width: 100%;
+  }
+  .employee-name {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+}
+@media (min-width: 768px) and (max-width: 1199.98px) {
+  .main-content {
+    padding-block: 28px;
+  }
+  .login-intro,
+  .login-form {
+    padding: 36px 28px;
+  }
+  .employee-table th,
+  .employee-table td {
+    padding: 16px 14px;
+  }
+}
+@media (max-width: 767.98px) {
+  .header-title {
+    display: none;
+  }
+  .login-card {
+    grid-template-columns: 1fr;
+  }
+  .login-intro {
+    padding: 24px;
+  }
+  .login-intro h1 {
+    max-width: none;
+    font-size: 1.5rem;
+  }
+  .login-intro p,
+  .login-intro small,
+  .login-decoration {
+    display: none;
+  }
+  .login-form {
+    padding: 28px 24px;
+  }
+  .main-content,
+  .app-header {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  /* Preserve one semantic table and one image request per employee. */
+  .employee-table,
+  .employee-table tbody {
+    display: block;
+    width: 100%;
+  }
+  .employee-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .employee-table tr {
+    display: block;
+    padding: 16px;
+    border-bottom: 1px solid #e5eaf0;
+  }
+  .employee-table td {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    border: 0;
+    box-shadow: none;
+    min-width: 0 !important;
+    overflow-wrap: anywhere;
+  }
+  .employee-table td:first-child {
+    padding-top: 0;
+    padding-bottom: 12px;
+  }
+  .employee-table td::before {
+    content: attr(data-label);
+    color: var(--muted);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }
+  .employee-table td:first-child::before {
+    content: none;
+  }
+  .employee-table td.employee-row-arrow {
+    display: none;
+  }
+  .profile-actions > .btn {
+    flex: 1 1 140px;
+  }
+  .profile-identity {
+    flex-basis: calc(100% - 120px);
+  }
+  .profile-header h2 {
+    font-size: 1.3rem;
+  }
+}
+@media (max-width: 575.98px) {
+  .modal-dialog {
+    margin: 0;
+  }
+  .modal-dialog-scrollable {
+    height: calc(
+      100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)
+    );
+  }
+  .modal-content {
+    min-height: 100%;
+    border-radius: 0;
+  }
+  .modal-header {
+    padding: 12px 16px;
+  }
+  .modal .form-actions {
+    padding-bottom: 12px;
+  }
+  .login-page {
+    padding-inline: max(16px, env(safe-area-inset-left, 0px))
+      max(16px, env(safe-area-inset-right, 0px));
   }
 }
 @media (prefers-reduced-motion: reduce) {

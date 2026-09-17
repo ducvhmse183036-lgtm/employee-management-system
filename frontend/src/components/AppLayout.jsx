@@ -13,7 +13,15 @@ export default function AppLayout() {
     const element = panel.current
     const offcanvas = new Offcanvas(element)
     instance.current = offcanvas
+    const desktop = window.matchMedia('(min-width: 1200px)')
+    const closeOnDesktop = () => {
+      if (desktop.matches) offcanvas.hide()
+    }
+    desktop.addEventListener('change', closeOnDesktop)
+    element.addEventListener('shown.bs.offcanvas', closeOnDesktop)
     return () => {
+      desktop.removeEventListener('change', closeOnDesktop)
+      element.removeEventListener('shown.bs.offcanvas', closeOnDesktop)
       // Let Bootstrap finish hiding so its scroll lock and focus trap are released.
       if (
         element.classList.contains('show') ||
@@ -41,9 +49,10 @@ export default function AppLayout() {
   return (
     <div className="app-shell">
       <aside
-        className="sidebar offcanvas-lg offcanvas-start"
+        className="sidebar offcanvas-xl offcanvas-start"
         tabIndex="-1"
         ref={panel}
+        id="app-navigation"
         aria-labelledby="navigation-title"
       >
         <div className="sidebar-brand">
@@ -54,7 +63,7 @@ export default function AppLayout() {
             People<span>EMPLOYEE MANAGEMENT</span>
           </div>
           <button
-            className="btn-close btn-close-white d-lg-none ms-auto"
+            className="btn-close btn-close-white d-xl-none ms-auto"
             onClick={() => instance.current.hide()}
             aria-label="Close navigation"
           />
@@ -89,8 +98,9 @@ export default function AppLayout() {
         <header className="app-header">
           <div className="d-flex align-items-center gap-3">
             <button
-              className="btn btn-light d-lg-none"
+              className="btn btn-light d-xl-none"
               aria-label="Open navigation"
+              aria-controls="app-navigation"
               onClick={() => instance.current.show()}
             >
               <Icon name="list" />
